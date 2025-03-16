@@ -1,4 +1,5 @@
 import json
+import random
 
 from datetime import datetime
 from datetime import timezone # Change from the book
@@ -21,6 +22,7 @@ class Blockchain(object):
             "timestamp": datetime.now(timezone.utc).isoformat(), # Change from the book
             "transactions": self.pending_transactions,
             "previous_hash": previous_hash,
+            "nonce": format(random.getrandbits(64), "x"),
         }
 
         # Get the hash of this new block and add it to the block
@@ -30,11 +32,6 @@ class Blockchain(object):
         # Reset the list of pending transactions
         self.pending_transactions = []
 
-        # Add the new block to the chain
-        self.chain.append(block)
-
-        print(f"Created block {block['index']}")
-
         return block
 
     @staticmethod
@@ -43,6 +40,23 @@ class Blockchain(object):
         block_string = json.dumps(block, sort_keys=True).encode()
         return sha256(block_string).hexdigest()
     
+    @staticmethod
+    def valid_block(block):
+        return block["hash"].startswith("0000")
+    
+    def proof_of_work(self):
+        while True:
+            new_block = self.new_block()
+            if self.valid_block(new_block):
+                break
+        
+        self.chain.append(new_block)
+        print("Found a new block", new_block)
+
+    def valid_hash(self):
+        pass 
+    
+    @property
     def last_block(self):
         # Gets the latest block in the chain
         return self.chain[-1] if self.chain else None

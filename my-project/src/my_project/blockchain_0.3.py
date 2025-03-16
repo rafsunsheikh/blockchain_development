@@ -21,6 +21,7 @@ class Blockchain(object):
             "timestamp": datetime.now(timezone.utc).isoformat(), # Change from the book
             "transactions": self.pending_transactions,
             "previous_hash": previous_hash,
+            "nonce": None,
         }
 
         # Get the hash of this new block and add it to the block
@@ -42,6 +43,11 @@ class Blockchain(object):
         # We ensure the dictionary is sorted or we'll have inconsistent hashes
         block_string = json.dumps(block, sort_keys=True).encode()
         return sha256(block_string).hexdigest()
+    
+    def proof_of_work(self):
+        pass
+    def valid_hash(self):
+        pass 
     
     def last_block(self):
         # Gets the latest block in the chain
